@@ -261,6 +261,12 @@ module _ {X : 𝓤 i} {A : 𝓤 j}
         → (x , a) ≡ (y , b)
  to-×-≡ (refl x , refl a) = refl (x , a)
 
+module _ where
+ from-Σ-≡'' : {X : 𝓤 i} {A : X → 𝓤 j}
+         {(x , a) (.x , b) : Σ A} {q : (x , a) ≡ (x , b)} →
+         Σ {_} {_} {x ≡ x} (λ (refl _) → (a ≡ b))
+ from-Σ-≡'' = ? --refl x , refl a
+
 module _ {X : 𝓤 i} {A : X → 𝓤 j}
          {(x , a) (y , b) : Σ A} where
 

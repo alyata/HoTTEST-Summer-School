@@ -46,7 +46,7 @@ Notice that the type of `pr₂` is dependent and uses `pr₁` to express the dep
 However, for a number of reasons to be explained later, we prefer to define it using a [record](https://agda.readthedocs.io/en/latest/language/record-types.html) definition:
 
 ```agda
-record Σ {A : Type } (B : A → Type) : Type  where
+record Σ {a b : Agda.Primitive.Level} {A : Set a} (B : A → Set b) : Set (Agda.Primitive._⊔_ a b) where
  constructor
   _,_
  field
@@ -65,7 +65,7 @@ Because we make `_,_` right associative, we can write `(x , y , z , p)` rather t
 We also use a syntax declaration, [as we did](products.lagda.md) for dependent function types using Π, to get the more traditional type-theoretical notation.
 ```agda
 Sigma : (A : Type) (B : A → Type) → Type
-Sigma A B = Σ {A} B
+Sigma A B = Σ {_} {_} {A} B
 
 syntax Sigma A (λ x → b) = Σ x ꞉ A , b
 

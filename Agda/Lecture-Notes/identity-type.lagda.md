@@ -16,7 +16,7 @@ open import general-notation
 
 The original and main terminology for the following type is *identity type*, but sometimes it is also called the *equality type*. Sometimes this is also called *propositional equality*, but we will avoid this terminology as it sometimes leads to confusion.
 ```agda
-data _≡_ {A : Type} : A → A → Type where
+data _≡_ {a : Agda.Primitive.Level} {A : Set a} : A → A → Set a where
  refl : (x : A) → x ≡ x
 
 infix 0 _≡_

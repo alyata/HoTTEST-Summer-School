@@ -40,7 +40,8 @@ the leftmost argument only.
 
 ```agda
 _&&'_ : Bool → Bool → Bool
-a &&' b = {!!}
+true &&' b = b
+false &&' b = false
 ```
 
 One advantage of this definition is that it reads just like a Boolean truth
@@ -54,7 +55,10 @@ verbose definition.
 
 ```agda
 _xor_ : Bool → Bool → Bool
-a xor b = {!!}
+true xor true = false
+true xor false = true
+false xor true = true
+false xor false = false
 ```
 
 ### Exercise 3 (★)
@@ -67,16 +71,18 @@ left hand side and the right hand side compute to the same value.
 
 ```agda
 _^_ : ℕ → ℕ → ℕ
-n ^ m = {!!}
+n ^ zero = 1
+n ^ suc m = n * (n ^ m)
 
 ^-example : 3 ^ 4 ≡ 81
-^-example = {!!} -- refl 81 should fill the hole here
+^-example = refl _ -- refl 81 should fill the hole here
 
 _! : ℕ → ℕ
-n ! = {!!}
+zero ! = 1
+suc n ! = (suc n) * (n !)
 
 !-example : 4 ! ≡ 24
-!-example = {!!} -- refl 24 should fill the hole here
+!-example = refl 24 -- refl 24 should fill the hole here
 ```
 
 ### Exercise 4 (★)
@@ -93,10 +99,12 @@ max (suc n) (suc m) = suc (max n m)
 
 ```agda
 min : ℕ → ℕ → ℕ
-min = {!!}
+min zero m = zero
+min (suc n) zero = zero
+min (suc n) (suc m) = suc (min n m)
 
 min-example : min 5 3 ≡ 3
-min-example = {!!} -- refl 3 should fill the hole here
+min-example = refl 3 -- refl 3 should fill the hole here
 ```
 
 ### Exercise 5 (★)
@@ -110,10 +118,11 @@ element of the list `xs` and returns the resulting list.
 
 ```agda
 map : {X Y : Type} → (X → Y) → List X → List Y
-map f xs = {!!}
+map f [] = []
+map f (x :: xs) = f x :: map f xs
 
 map-example : map (_+ 3) (1 :: 2 :: 3 :: []) ≡ 4 :: 5 :: 6 :: []
-map-example = {!!} -- refl _ should fill the hole here
+map-example = refl _ -- refl _ should fill the hole here
 
                    -- We write the underscore, because we don't wish to repeat
                    -- the relatively long "4 :: 5 :: 6 :: []" and Agda can
@@ -130,14 +139,19 @@ should return [4 , 3 , 1], see the code below.
 
 ```agda
 filter : {X : Type} (p : X → Bool) → List X → List X
-filter = {!!}
+filter p [] = []
+filter {X} p (x :: xs) = go (p x)
+  where
+    go : Bool → List X
+    go true = x :: filter p xs
+    go false = filter p xs
 
 is-non-zero : ℕ → Bool
 is-non-zero zero    = false
 is-non-zero (suc _) = true
 
 filter-example : filter is-non-zero (4 :: 3 :: 0 :: 1 :: 0 :: []) ≡ 4 :: 3 :: 1 :: []
-filter-example = {!!} -- refl _ should fill the hole here
+filter-example = refl _ -- refl _ should fill the hole here
 ```
 
 ## Part II: The identity type of the Booleans (★/★★)
@@ -152,7 +166,10 @@ are the same natural number, or else is empty, if `x` and `y` are different.
 
 ```agda
 _≣_ : Bool → Bool → Type
-a ≣ b = {!!}
+true ≣ true = 𝟙
+true ≣ false = 𝟘
+false ≣ true = 𝟘
+false ≣ false = 𝟙
 ```
 
 ### Exercise 2 (★)
@@ -161,7 +178,8 @@ a ≣ b = {!!}
 
 ```agda
 Bool-refl : (b : Bool) → b ≣ b
-Bool-refl = {!!}
+Bool-refl true = ⋆
+Bool-refl false = ⋆
 ```
 
 ### Exercise 3 (★★)
@@ -175,10 +193,16 @@ back and forth between `a ≣ b` and `a ≡ b`.
 
 ```agda
 ≡-to-≣ : (a b : Bool) → a ≡ b → a ≣ b
-≡-to-≣ = {!!}
+≡-to-≣ true true (refl .true) = ⋆
+≡-to-≣ true false ()
+≡-to-≣ false true ()
+≡-to-≣ false false (refl .false) = ⋆
 
 ≣-to-≡ : (a b : Bool) → a ≣ b → a ≡ b
-≣-to-≡ = {!!}
+≣-to-≡ true true ⋆ = refl _
+≣-to-≡ true false ()
+≣-to-≡ false true ()
+≣-to-≡ false false ⋆ = refl _
 ```
 
 ## Part III: Proving in Agda (★★/★★★)
@@ -199,7 +223,10 @@ Use pattern matching to **prove** that `||` is commutative.
 
 ```agda
 ||-is-commutative : (a b : Bool) → a || b ≡ b || a
-||-is-commutative a b = {!!}
+||-is-commutative true true = refl _
+||-is-commutative true false = refl _
+||-is-commutative false true = refl _
+||-is-commutative false false = refl _
 ```
 
 ### Exercise 2 (★★)
@@ -208,7 +235,7 @@ Taking inspiration from the above, try to **state** and **prove** that `&&` is
 commutative.
 
 ```agda
-&&-is-commutative : {!!}
+&&-is-commutative : (a b : Bool) → a && b ≡ b && a
 &&-is-commutative = {!!}
 ```
 
@@ -218,7 +245,8 @@ commutative.
 
 ```agda
 &&-is-associative : (a b c : Bool) → a && (b && c) ≡ (a && b) && c
-&&-is-associative = {!!}
+&&-is-associative true b c = refl _
+&&-is-associative false b c = refl _
 
 &&'-is-associative : (a b c : Bool) → a &&' (b &&' c) ≡ (a &&' b) &&' c
 &&'-is-associative = {!!}
@@ -249,7 +277,7 @@ max-is-commutative (suc n) (suc m) = to-show
 
 ```agda
 min-is-commutative : (n m : ℕ) → min n m ≡ min m n
-min-is-commutative = {!!}
+min-is-commutative n m = {!!}
 ```
 
 ### Exercise 5 (★★★)
@@ -259,7 +287,8 @@ number `n`.
 
 ```agda
 0-right-neutral : (n : ℕ) → n ≡ n + 0
-0-right-neutral = {!!}
+0-right-neutral zero = refl _
+0-right-neutral (suc n) = ap suc (0-right-neutral n)
 ```
 
 ### Exercise 6 (★★★)
@@ -271,9 +300,12 @@ Try to **prove** these equations using pattern matching and inductive proofs.
 
 ```agda
 map-id : {X : Type} (xs : List X) → map id xs ≡ xs
-map-id xs = {!!}
+map-id [] = refl _
+map-id (x :: xs) = ap (λ xs → x :: xs) (map-id xs)
 
 map-comp : {X Y Z : Type} (f : X → Y) (g : Y → Z)
            (xs : List X) → map (g ∘ f) xs ≡ map g (map f xs)
-map-comp f g xs = {!!}
+map-comp f g [] = refl _
+map-comp f g (x :: xs) = ap (λ xs → g (f x) :: xs) (map-comp f g xs)
+
 ```
